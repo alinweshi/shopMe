@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9fafb; /* Light background */
+    color: #374151; /* Text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.guest-layout {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Set width of the form */
+}
+
+.input-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.text-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db; /* Light border */
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.input-error {
+    color: red;
+    font-size: 0.875rem; /* Small text for errors */
+}
+
+.checkbox {
+    margin-right: 0.5rem; /* Spacing for checkbox */
+}
+
+.primary-button {
+    background-color: #3b82f6; /* Blue background */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    background-color: #2563eb; /* Darker blue on hover */
+}
+
+.forgot-password {
+    text-decoration: underline;
+    color: #6b7280; /* Gray color */
+    margin-right: auto; /* Align left */
+}
+
+.ms-2 {
+    margin-left: 0.5rem; /* Margin for left spacing */
+}
+
+.ms-3 {
+    margin-left: 1rem; /* Larger margin for spacing */
+}

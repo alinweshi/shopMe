@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9fafb; /* Light background */
+    color: #374151; /* Text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0; /* Remove default margin */
+}
+
+.guest-layout {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Set width of the form */
+}
+
+.mb-4 {
+    margin-bottom: 1rem; /* Margin for spacing */
+}
+
+.text-sm {
+    font-size: 0.875rem; /* Smaller text size */
+}
+
+.text-gray-600 {
+    color: #4b5563; /* Gray color */
+}
+
+.text-green-600 {
+    color: #16a34a; /* Green color for success messages */
+}
+
+.primary-button {
+    background-color: #3b82f6; /* Blue background */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.primary-button:hover {
+    background-color: #2563eb; /* Darker blue on hover */
+}
+
+.underline {
+    text-decoration: underline; /* Underline for links */
+}
+
+.hover\:text-gray-900:hover {
+    color: #111827; /* Darker gray on hover */
+}
+
+.rounded-md {
+    border-radius: 0.375rem; /* Rounded corners */
+}
+
+.focus\:outline-none:focus {
+    outline: none; /* Remove focus outline */
+}
+
+.focus\:ring-2:focus {
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5); /* Focus ring */
+}
