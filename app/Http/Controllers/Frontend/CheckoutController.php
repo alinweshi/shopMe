@@ -1,125 +1,145 @@
 <?php
-namespace App\Http\Controllers;
+
+namespace App\Http\Controllers\Frontend;
 
 use App\Models\Cart;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Services\MyFatoorahService;
+use App\Models\Coupon;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
+use App\Models\ShippingMethod;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
+use App\Services\MyFatoorahService;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
-    private $myfatoorahService;
+    protected $myfatoorahService;
 
     public function __construct(MyFatoorahService $myfatoorahService)
     {
         $this->myfatoorahService = $myfatoorahService;
     }
 
-    /**
-     * Show the checkout page.
-     */
     public function index()
     {
-        $user = auth()->user();
-        $cartItems = Cart::with('product')->where('user_id', $user->id)->get();
+        $cartItems = $this->loadCartItems();
+        $shippingMethods = $this->loadShippingMethods();
+        $selectedShippingMethod = $shippingMethods[0]['id'] ?? null;
+        $totalPrice = $this->calculateTotalPrice($cartItems, $selectedShippingMethod);
 
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
-        }
-
-        return view('checkout.index', ['cartItems' => $cartItems]);
+        return view('frontend.checkout.index', compact('cartItems', 'shippingMethods', 'selectedShippingMethod', 'totalPrice'));
     }
 
-    /**
-     * Process the checkout and redirect to payment gateway.
-     */
-    public function process(Request $request)
+    protected function loadCartItems()
     {
-        $user = auth()->user();
-        $cartItems = Cart::with('product')->where('user_id', $user->id)->get();
+        $user = Auth::user();
+        $cart = Cart::where('user_id', $user->id)
+            ->with(['cartItems.product:id,name,price'])
+            ->first();
 
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        if ($cart) {
+            return $cart->cartItems->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->product->name ?? 'Product not available',
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->product->price ?? 0,
+                    'total_price' => $item->total_price,
+                ];
+            })->toArray();
         }
 
+        return [];
+    }
+
+    protected function loadShippingMethods()
+    {
+        return ShippingMethod::all()->map(function ($method) {
+            return [
+                'id' => $method->id,
+                'name' => $method->name,
+                'cost' => $method->cost,
+            ];
+        })->toArray();
+    }
+
+    protected function calculateTotalPrice($cartItems, $selectedShippingMethod)
+    {
+        $cartTotal = array_sum(array_column($cartItems, 'total_price'));
+        $shippingCost = ShippingMethod::find($selectedShippingMethod)->cost ?? 0;
+
+        return $cartTotal + $shippingCost;
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $couponCode = $request->input('coupon_code');
+        $coupon = Coupon::where('code', $couponCode)->first();
+
+        if (!$coupon || $coupon->isExpired()) {
+            return back()->withErrors(['coupon' => 'Invalid or expired coupon.']);
+        }
+
+        $totalPrice = $this->calculateTotalPrice($this->loadCartItems(), $request->input('selected_shipping_method'));
+        $discount = $coupon->getDiscount($totalPrice);
+
+        $totalPrice -= $discount;
+
+        return back()->with(['totalPrice' => $totalPrice, 'couponSuccess' => 'Coupon applied successfully!']);
+    }
+
+    public function proceedToPayment(Request $request)
+    {
+        $paymentData = [
+            'customer_name' => Auth::user()->first_name,
+            'currency_iso' => 'KWD',
+            'mobile_country_code' => '+965',
+            'customer_mobile' => Auth::user()->phone ?? '',
+            'customer_email' => Auth::user()->email ?? '',
+            'invoice_value' => $request->input('total_price'),
+            'payment_method_id' => $request->input('selected_shipping_method'),
+            'coupon_code' => $request->input('coupon_code'),
+        ];
+
+        return $this->initiatePayment($paymentData);
+    }
+
+    public function initiatePayment(array $paymentData)
+    {
+        try {
+            $paymentResponse = $this->myfatoorahService->initiatePayment($paymentData['invoice_value'], $paymentData['currency_iso']);
+            return redirect()->away($paymentResponse['PaymentURL']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Payment initiation failed. Please try again.']);
+        }
+    }
+
+    public function paymentSuccess()
+    {
         DB::beginTransaction();
 
         try {
-            // Create the order
             $order = Order::create([
-                'user_id' => $user->id,
-                'total_price' => $cartItems->sum('total_price'),
-                'status' => 'pending',
+                'user_id' => Auth::id(),
+                'status' => 'completed',
+                'total_price' => request('total_price'),
             ]);
 
-            // Create order items
-            foreach ($cartItems as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->price,
-                    'total_price' => $item->total_price,
-                ]);
-            }
-
+            CartItem::where('cart_id', Cart::where('user_id', Auth::id())->first()->id)->delete();
             DB::commit();
 
-            // Prepare payment request
-            $paymentData = [
-                'amount' => $order->total_price,
-                'currency' => 'USD',
-                'order_id' => $order->id,
-                'return_url' => route('payment.success'),
-                'error_url' => route(name: 'payment.error'),
-            ];
-
-            $response = $this->myfatoorahService->sendPayment($paymentData);
-
-            // Redirect to the payment gateway
-            return Redirect::away($response->PaymentURL);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('cart.index')->with('error', 'Failed to process your order. Please try again.');
-        }
-    }
-
-    /**
-     * Handle payment success.
-     */
-    public function paymentSuccess(Request $request)
-    {
-        $orderId = $request->input('order_id');
-        $order = Order::findOrFail($orderId);
-
-        DB::beginTransaction();
-
-        try {
-            $order->status = 'completed';
-            $order->save();
-
-            // Clear the cart
-            Cart::where('user_id', auth()->user()->id)->delete();
-
-            DB::commit();
-
-            return redirect()->route('order.confirmation', ['order' => $orderId])
+            return redirect()->route('order.confirmation', ['order' => $order->id])
                 ->with('success', 'Payment successful. Thank you for your order!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('cart.index')->with('error', 'Failed to complete the payment. Please try again.');
+            return back()->withErrors(['error' => 'Failed to complete the payment. Please try again.']);
         }
     }
 
-    /**
-     * Handle payment error.
-     */
-    public function paymentError(Request $request)
+    public function paymentError()
     {
-        return redirect()->route('cart.index')
-            ->with('error', 'Payment failed. Please try again.');
+        return redirect()->route('cart.view')->withErrors(['error' => 'Payment failed. Please try again.']);
     }
 }

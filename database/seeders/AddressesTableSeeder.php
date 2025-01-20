@@ -4,44 +4,44 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AddressesTableSeeder extends Seeder
 {
     public function run()
     {
-        // Example addresses for user 1
-        Address::create([
-            'user_id' => 1,
-            'line1' => '123 Main St',
-            'line2' => 'Apt 4B',
-            'city' => 'New York',
-            'state' => 'NY',
-            'country' => 'USA',
-            'postal_code' => '10001',
-            'is_default' => true, // Default shipping address
-        ]);
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('addresses')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        Address::create([
-            'user_id' => 1,
-            'line1' => '456 Elm St',
-            'line2' => '',
-            'city' => 'Brooklyn',
-            'state' => 'NY',
-            'country' => 'USA',
-            'postal_code' => '11201',
-            'is_default' => false, // Non-default billing address
-        ]);
+        // Create a range and exclude 76
+        // $userIds = array_diff(range(0, 83), [76]);
+        $userIds = range(1, 11);
 
-        // Example addresses for user 2
-        Address::create([
-            'user_id' => 2,
-            'line1' => '789 Maple St',
-            'line2' => '',
-            'city' => 'San Francisco',
-            'state' => 'CA',
-            'country' => 'USA',
-            'postal_code' => '94107',
-            'is_default' => true, // Default address for user 2
-        ]);
+        foreach ($userIds as $userId) {
+            // Default address
+            Address::create([
+                'user_id' => $userId,
+                'line1' => "Address Line 1 for User {$userId}",
+                'line2' => "Address Line 2 for User {$userId}",
+                'city' => 'City' . $userId,
+                'state' => 'State' . $userId,
+                'country' => 'Country' . $userId,
+                'postal_code' => str_pad($userId, 5, '0', STR_PAD_LEFT),
+                'is_default' => true,
+            ]);
+
+            // Non-default address
+            Address::create([
+                'user_id' => $userId,
+                'line1' => "Alternate Address Line 1 for User {$userId}",
+                'line2' => "Alternate Address Line 2 for User {$userId}",
+                'city' => 'Alternate City' . $userId,
+                'state' => 'Alternate State' . $userId,
+                'country' => 'Country' . $userId,
+                'postal_code' => str_pad($userId + 1000, 5, '0', STR_PAD_LEFT),
+                'is_default' => false,
+            ]);
+        }
     }
 }

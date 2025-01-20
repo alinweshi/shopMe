@@ -11,4 +11,9 @@ class Payment extends Model
         'transaction_id',
         'transaction_status',
     ];
+
+    public function transaction()
+    {
+        return $this->morphMany(Transaction::class, 'transactionAble_id');
+    }
 }

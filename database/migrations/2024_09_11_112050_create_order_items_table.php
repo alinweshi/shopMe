@@ -4,34 +4,28 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+return new class () extends Migration {
+    public function up()
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('product_id');
-            $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2); // Price at the time of the order
-            $table->decimal('total_price', 10, 2); // Quantity * unit_price
-            $table->index(['order_id', 'product_id']);
-            $table->timestamps();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
 
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            // Ensure unsignedBigInteger for foreign key consistency
+            $table->unsignedBigInteger('product_attribute_id')->nullable();
+            $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
+
+            $table->integer('quantity');
+            $table->decimal('unit_price', 10, 2);
+            $table->decimal('total_price', 10, 2); // Quantity * unit_price
+            $table->timestamps();
         });
 
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('order_item_');
+        Schema::dropIfExists('order_items');
     }
 };

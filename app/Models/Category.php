@@ -23,11 +23,11 @@ class Category extends Model
     }
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class); //category has many products
     }
-    public function discounts()
-    {
-        return $this->belongsToMany(Discount::class);
-    }
+    // public function discounts()
+    // {
+    //     return $this->belongsToMany(Discount::class);
+    // }
 
 }

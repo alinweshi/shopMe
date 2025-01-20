@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -12,7 +11,7 @@ return [
     | location for this type of information, allowing packages to have
     | a conventional file to locate the various service credentials.
     |
-    */
+     */
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
@@ -25,7 +24,7 @@ return [
     ],
 
     'resend' => [
-        'key' => env('RESEND_KEY'),
+        'key' => env(key: 'RESEND_KEY'),
     ],
 
     'slack' => [
@@ -35,4 +34,23 @@ return [
         ],
     ],
 
+    'myfatoorah' => [
+        'token' => env('MYFATOORAH_TOKEN'), // Add your token in .env file
+        'initiate_payment_url' => env('MYFATOORAH_INITIATE_PAYMENT_URL'), // Add the URL in .env file
+        'execute_payment_url' => env('MYFATOORAH_EXECUTE_PAYMENT_URL'), // Add the URL in .env file
+        // 'send_payment_url' => env('MYFATOORAH_SEND_PAYMENT_URL'), // Add the URL in .env file
+        'get_payment_status_url' => env('MYFATOORAH_GET_PAYMENT_STATUS_URL'), // Add the URL in .env file
+        'update_payment_status_url' => env('MYFATOORAH_UPDATE_PAYMENT_STATUS_URL'), // Add the URL in .env file
+        'send_payment_url' => env('MYFATOORAH_SEND_PAYMENT_URL'), // Add the URL in .env file
+        'secret' => env('MYFATOORAH_WEBHOOK_SECRET_KEY'),
+        'callback_url' => env('MYFATOORAH_CALLBACK_URL'),
+
+    ],
+    'mailgun' => [
+        'transport' => 'mailgun',
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
 ];

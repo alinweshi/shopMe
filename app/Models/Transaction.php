@@ -9,21 +9,64 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
-        'transactionAble_id',
-        'transactionAble_type',
+        'transactionable_id',
+        'transactionable_type',
         'invoice_number',
         'status',
-        'total',
+        'subtotal',
         'tax',
+        'discount_amount',
+        'shipping_fee',
+        'net_total',
         'currency',
+        'payment_method',
+        'reference_id',
         'billed_at',
     ];
 
-    // Optionally, you can define relationships if there are any
-    // For example, if a transaction belongs to a user or an order:
-    public function billable()
+    /**
+     * The attributes that should be cast to native types.
+     */
+    protected $casts = [
+        'subtotal' => 'decimal:2',
+        'tax' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'shipping_fee' => 'decimal:2',
+        'net_total' => 'decimal:2',
+        'billed_at' => 'datetime',
+    ];
+
+    /**
+     * Get the parent transactionable model (order, user, etc.).
+     */
+    public function transactionable()
     {
-        return $this->morphTo(); //user+order+product
+        return $this->morphTo();
+    }
+
+    /**
+     * Accessor to calculate the total tax as a percentage of the subtotal.
+     */
+    public function getTaxPercentageAttribute()
+    {
+        return $this->subtotal > 0
+            ? round(($this->tax / $this->subtotal) * 100, 2)
+            : 0;
+    }
+
+    /**
+     * Accessor for a formatted currency display.
+     */
+    public function getFormattedTotalAttribute()
+    {
+        return number_format($this->net_total, 2).' '.strtoupper($this->currency);
+    }
+        public function setStatusAttribute($value)
+    {
+        $this->attributes['status'] = strtolower($value);
     }
 }

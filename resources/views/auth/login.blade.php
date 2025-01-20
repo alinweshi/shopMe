@@ -5,23 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 
 <body>
     <div class="guest-layout">
-        <!-- Session Status -->
         <div id="session-status" class="mb-4"></div>
 
-        <form method="POST" action="/login">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}"> <!-- CSRF Token -->
+        <form method="POST" action="{{ request()->is('admin/*') ? route('admin.login') : route('login') }}">
+            @csrf
+            @method('POST')
 
-            <!-- Email Address -->
+            <!-- Phone Number -->
             <div>
-                <label for="email" class="input-label">Email</label>
-                <input id="email" class="text-input" type="email" name="email" required autofocus
-                    autocomplete="username" />
-                <div class="input-error" id="email-error"></div> <!-- Error message placeholder -->
+                <label for="phone" class="input-label">Phone</label>
+                <input id="phone" class="text-input" type="tel" name="phone" required autofocus autocomplete="tel" />
+                @error('phone')
+                <div class="input-error">{{ $message }}</div>
+                @enderror
             </div>
 
             <!-- Password -->
@@ -29,7 +30,9 @@
                 <label for="password" class="input-label">Password</label>
                 <input id="password" class="text-input" type="password" name="password" required
                     autocomplete="current-password" />
-                <div class="input-error" id="password-error"></div> <!-- Error message placeholder -->
+                @error('password')
+                <div class="input-error">{{ $message }}</div>
+                @enderror
             </div>
 
             <!-- Remember Me -->

@@ -11,11 +11,11 @@ class ShippingMethodController extends Controller
     /**
      * Display a listing of the shipping methods.
      */
-    public function index()
-    {
-        $shippingMethods = ShippingMethod::all();
-        return view('shipping.index', compact('shippingMethods'));
-    }
+    // public function index()
+    // {
+    //     $shippingMethods = ShippingMethod::all();
+    //     return view ('shipping.index', compact('shippingMethods'));
+    // }
 
     /**
      * Store the selected shipping method for an order.

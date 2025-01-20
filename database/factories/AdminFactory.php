@@ -18,16 +18,16 @@ class AdminFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'username' => fake()->unique()->userName(), // Change this line
-            'email' => fake()->unique()->safeEmail(),
-            'password' => Hash::make('password'),
-            'phone' => fake()->phoneNumber(), // Change this line
-            'image' => fake()->imageUrl(),
-            'status' => fake()->randomElement(['active', 'inactive']), // Use randomElement for ENUM
-
-            'is_super' => fake()->boolean(), // Change this line
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'username' => $this->faker->unique()->userName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => Hash::make('password'), // Make sure the password is correctly hashed
+            'phone' => $this->faker->unique()->phoneNumber(), // Ensure unique phone numbers
+            'image' => $this->faker->imageUrl(),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'is_super' => $this->faker->boolean(),
         ];
     }
+
 }

@@ -17,9 +17,11 @@
                 <th>Product Category</th>
                 <th>Product Description</th>
                 <th>Product Price</th>
+                <th>Product discount</th>
                 <th>Product Final Price</th>
                 <th>Product Images</th>
                 <th>Product Attributes</th>
+                <th>addToCart</th>
             </tr>
         </thead>
         <tbody>
@@ -38,8 +40,11 @@
                 </td>
                 <td>{{ $product->description }}</td>
                 <td>{{ $product->price }}</td>
-                <td>@if ($product->discounts->isNotEmpty())
+                <td>{{ $product->discount_type }}</td>
+                <td>@if ($product->discount)
                     <p>Discounted Price: ${{ $product->final_price }}</p>
+                    @else
+                    <p>Final Price: ${{ $product->price }}</p>
                     @endif
                 </td>
                 <td>
@@ -68,6 +73,15 @@
                     @else
                     No Variants
                     @endif
+                </td>
+                <td>
+                    <form action="{{ route('cart.add',$product->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <button type="submit">Add to Cart</button>
+                    </form>
+
+
                 </td>
             </tr>
             @endforeach

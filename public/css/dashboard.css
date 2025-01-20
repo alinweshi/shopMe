@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6; /* Light gray background */
+}
+header {
+    background-color: #ffffff; /* White header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+h2 {
+    color: #4a5568; /* Dark gray text */
+    margin: 0;
+}
+.dashboard-content {
+    background-color: #ffffff; /* White content area */
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+.logout-button {
+    background-color: #e53e3e; /* Red background */
+    color: white; /* White text */
+    padding: 0.5rem 1rem; /* Padding */
+    border: none; /* No border */
+    border-radius: 0.25rem; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Transition effect */
+}
+.logout-button:hover {
+    background-color: #c53030; /* Darker red on hover */
+}

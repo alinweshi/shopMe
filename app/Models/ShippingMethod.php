@@ -13,7 +13,15 @@ class ShippingMethod extends Model
     protected $fillable = [
         'name',
         'cost',
-        'estimated_days',
+        'delivery_time',
+        'description',
+        'is_active',
+        'image',
+        'slug',
+        'is_default',
+        'is_free',
+        'is_pickup',
+
     ];
 
     /**
