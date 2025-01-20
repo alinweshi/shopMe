@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiControllers\AddressController;
-use App\Http\Controllers\ApiControllers\CartController;
+use App\Http\Controllers\ApiControllers\ApiCartController;
 use App\Http\Controllers\ApiControllers\MyFatoorahWebhookController;
 use App\Http\Controllers\ApiControllers\OrderController;
 use App\Http\Controllers\ApiControllers\PaymentController;
@@ -44,12 +44,12 @@ route::prefix('users')->group(function () {
         ->middleware('auth:sanctum');
 });
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/cart/add', [CartController::class, 'addToCart']);
-    Route::get('/cart/view', [CartController::class, 'viewCart']);
-    Route::put('/cart/update/{id}', [CartController::class, 'updateCart']);
-    Route::delete('/cart/remove/{id}', [CartController::class, 'removeCartItem']);
-    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-    Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon']);
+    Route::post('/cart/add', [ApiCartController::class, 'addToCart']);
+    Route::get('/cart/view', [ApiCartController::class, 'viewCart']);
+    Route::put('/cart/update/{id}', [ApiCartController::class, 'updateCart']);
+    Route::delete('/cart/remove/{id}', [ApiCartController::class, 'removeCartItem']);
+    Route::delete('/cart/clear', [ApiCartController::class, 'clearCart']);
+    Route::post('/cart/apply-coupon', [ApiCartController::class, 'applyCoupon']);
     Route::get('/shipping-methods', [ShippingMethodController::class, 'index']);
 });
 Route::middleware('auth:sanctum')->group(function () {
