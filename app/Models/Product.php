@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    public $preventsLazyLoading = true;
 
     // The attributes that are mass assignable
     protected $fillable = [
@@ -47,10 +48,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
-    public function discounts()
-    {
-        return $this->belongsToMany(Discount::class);
-    }
+    // public function discounts()
+    // {
+    //     return $this->belongsToMany(Discount::class);
+    // }
 
     /**
      * Calculate the final price after discount (if applicable).

@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ForgotPasswordRequest;
-use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegistrationRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserLoginRequest;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Jobs\SendWelcomeRegistrationEmailJob;
+use App\Http\Requests\UserRegistrationRequest;
 use Illuminate\Validation\ValidationException;
 
 class UserAuthController extends Controller
@@ -23,6 +24,13 @@ class UserAuthController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Failed to register user.'], 400);
         }
+        // SendWelcomeRegistrationEmailJob::dispatchAfterResponse();
+        // SendWelcomeRegistrationEmailJob::dispatchSync();
+        // SendWelcomeRegistrationEmailJob::dispatch_now();
+        SendWelcomeRegistrationEmailJob::dispatch($user)
+            ->onQueue('emails')
+            ->delay(now()->addMinutes(10));
+
         return response()->json([
             'message' => 'User Created successfully',
             'user' => $user,

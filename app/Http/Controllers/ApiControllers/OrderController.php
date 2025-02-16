@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Interfaces\Payments\PaymentServiceInterface;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateOrderRequest;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CreateOrderRequest;
+use App\Interfaces\Payments\PaymentServiceInterface;
 
 class OrderController extends Controller
 {
@@ -102,6 +103,39 @@ class OrderController extends Controller
                 'message' => 'An error occurred while fetching your orders.',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+    public function ordersByUsers()
+    {
+        $ordersByUser = DB::table('orders')
+            ->select('user_id', DB::raw('COUNT(*) as total_orders'))
+            ->groupBy('user_id')
+            ->get();
+        return response()->json([
+            'success' => true,
+            'data' => $ordersByUser
+        ]);
+    }
+    public function ordersByUser($userId)
+    {
+        // Retrieve total orders for a specific user
+        $ordersByUser = DB::table('orders')
+            ->select('user_id', DB::raw('COUNT(*) as total_orders'))
+            ->where('user_id', $userId) // Filter by the provided user ID
+            ->groupBy('user_id')
+            ->first(); // Use `first()` instead of `get()` since we expect a single result
+
+        // Check if the user has any orders
+        if ($ordersByUser) {
+            return response()->json([
+                'success' => true,
+                'data' => $ordersByUser
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No orders found for this user.'
+            ], 404);
         }
     }
 }

@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AddToCartRequest;
-use App\Http\Requests\ApplyCouponRequest;
-use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Coupon;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\UpdateCartRequest;
+use App\Http\Requests\ApplyCouponRequest;
 
 class CartController extends Controller
 {
@@ -22,6 +23,8 @@ class CartController extends Controller
     {
         $userId = Auth::id();
         $cart = Cart::firstOrCreate(['user_id' => $userId]);
+        Gate::authorize('addToCart', $cart);
+
 
         $product = Product::find($request->product_id);
 

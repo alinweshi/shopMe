@@ -15,6 +15,9 @@ class Cart extends Model
         'price',
         'total_price',
     ];
+    protected $casts = [
+        'total_price' => 'float',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

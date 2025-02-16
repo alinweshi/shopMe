@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
+use App\Jobs\ProcessPayment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -79,7 +80,9 @@ class PaymentController extends Controller
             $data = $request->all();
             $orderId = $request->orderId;
 
+
             $paymentData = $this->paymentService->sendPayment($data, $orderId);
+            ProcessPayment::dispatch($data);
             Log::info('Payment response data', ['data' => $paymentData]);
             return response()->json([
                 'success' => true,

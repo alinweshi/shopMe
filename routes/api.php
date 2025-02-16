@@ -1,16 +1,19 @@
 <?php
 
-use App\Http\Controllers\ApiControllers\AddressController;
-use App\Http\Controllers\ApiControllers\ApiCartController;
-use App\Http\Controllers\ApiControllers\MyFatoorahWebhookController;
-use App\Http\Controllers\ApiControllers\OrderController;
-use App\Http\Controllers\ApiControllers\PaymentController;
-use App\Http\Controllers\ApiControllers\ProductController;
-use App\Http\Controllers\ApiControllers\ShippingMethodController;
-use App\Http\Controllers\ApiControllers\UserAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiControllers\RoleController;
+use App\Http\Controllers\ApiControllers\OrderController;
+use App\Http\Controllers\ApiControllers\AddressController;
+use App\Http\Controllers\ApiControllers\ApiCartController;
+use App\Http\Controllers\ApiControllers\PaymentController;
+use App\Http\Controllers\ApiControllers\ProductController;
+use App\Http\Controllers\ApiControllers\UserAuthController;
+use App\Http\Controllers\ApiControllers\PermissionController;
+use App\Http\Controllers\ApiControllers\JwtAdminAuthController;
+use App\Http\Controllers\ApiControllers\ShippingMethodController;
+use App\Http\Controllers\ApiControllers\MyFatoorahWebhookController;
 
 Route::get('/user', function (Request $request) {
     return $request->user()->load('addresses');
@@ -30,10 +33,10 @@ Route::get('/test-email', function () {
 });
 
 Route::get('/products', [ProductController::class, 'index']);
-Route::post('/products', [ProductController::class, 'store']);
+Route::post('/products', [ProductController::class, 'store'])->can('create', 'product');
 Route::get('/products/{id}', [ProductController::class, 'show']);
-Route::put('/products/{id}/update', [ProductController::class, 'update']);
-Route::delete('/products/{id}/delete', [ProductController::class, 'delete']);
+Route::put('/products/{id}/update', [ProductController::class, 'update'])->can('update', 'product');
+Route::delete('/products/{id}/delete', [ProductController::class, 'delete'])->can('delete', 'product');
 route::prefix('users')->group(function () {
     Route::post('register', [UserAuthController::class, 'register']);
     Route::post('login', [UserAuthController::class, 'login']);
@@ -46,7 +49,7 @@ route::prefix('users')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cart/add', [ApiCartController::class, 'addToCart']);
     Route::get('/cart/view', [ApiCartController::class, 'viewCart']);
-    Route::put('/cart/update/{id}', [ApiCartController::class, 'updateCart']);
+    Route::PATCH('/cart-item/update/{id}', [ApiCartController::class, 'updateCartItem']);
     Route::delete('/cart/remove/{id}', [ApiCartController::class, 'removeCartItem']);
     Route::delete('/cart/clear', [ApiCartController::class, 'clearCart']);
     Route::post('/cart/apply-coupon', [ApiCartController::class, 'applyCoupon']);
@@ -75,3 +78,17 @@ Route::post('/payment/callback', [PaymentController::class, 'handleCallback']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/addresses/update', [AddressController::class, 'addNewAddress']);
 });
+Route::get('/orders/users/{user_id}', [OrderController::class, 'ordersByUser']);
+Route::get('users/orders/', [OrderController::class, 'ordersByUsers']);
+Route::prefix('admins')->group(function () {
+    Route::post('/login', [JwtAdminAuthController::class, 'login']);
+});
+Route::middleware('auth:api-admin')->get('/logout', [JwtAdminAuthController::class, 'logout']);
+/*----------------------------------------------------------------*/
+Route::middleware('auth:api-admin')->apiResource('roles', RoleController::class);
+Route::middleware('auth:api-admin')->apiResource('permissions', PermissionController::class);
+/*----------------------------------------------------------------*/
+
+use App\Http\Controllers\ApiControllers\PermissionRoleController;
+
+Route::post('/roles/{role}/permissions/{permission}', [PermissionRoleController::class, 'createPermissionRole']);

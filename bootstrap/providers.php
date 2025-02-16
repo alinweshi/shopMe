@@ -8,4 +8,6 @@ return [
     Illuminate\Foundation\Support\Providers\RouteServiceProvider::class,
     Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     App\Providers\RepositoryServiceProvider::class,
+    Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
 ];

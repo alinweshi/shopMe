@@ -45,7 +45,8 @@ class CartService implements CartServiceInterface
             'product_id' => $product->id,
         ]);
 
-        $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
+        // $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
+        $cartItem->quantity = $quantity; // Directly set the quantity
         $cartItem->original_price = $product->final_price;
         $cartItem->final_price = $cartItem->quantity * $cartItem->original_price;
 
@@ -78,5 +79,9 @@ class CartService implements CartServiceInterface
             'total' => $cart->cartItems->sum('final_price'),
             'totalItems' => $cart->cartItems->sum('quantity'),
         ];
+    }
+    public function updateCart($request)
+    {
+        $userId = Auth::id();
     }
 }
