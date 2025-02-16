@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use App\Repositories\PaymentRepository;
 use App\Interfaces\Payments\PaymentServiceInterface;
 
 class MyFatoorahService implements PaymentServiceInterface
@@ -20,7 +21,7 @@ class MyFatoorahService implements PaymentServiceInterface
     protected $getPaymentStatusApiUrl;
     protected $updatePaymentStatusApiUrl;
 
-    public function __construct()
+    public function __construct(protected PaymentRepository $paymentRepository)
     {
         $this->token = config('services.myfatoorah.token');
         $this->initiatedPaymentApiUrl = config('services.myfatoorah.initiate_payment_url');
@@ -128,12 +129,16 @@ class MyFatoorahService implements PaymentServiceInterface
         try {
             $response = $this->getPaymentStatus($data);
             // dd($response);
-
+            if (!isset($response['Data']['InvoiceId'])) {
+                throw new \Exception('InvoiceId is missing in the response.');
+            }
             // dd($response);
-            $order = Order::where('invoice_number', $response['Data']['InvoiceId'])->first();
-            // dd($response['Data']['InvoiceId']);
-            $order->status = 'completed';
-            $order->save();
+            $order = $this->paymentRepository->findOrderByInvoiceNumber($response['Data']['InvoiceId']);
+
+            if (!$order) {
+                throw new \Exception('Order not found for the given invoice number.');
+            }
+            $this->paymentRepository->updateOrderStatus($order->id, 'completed');
 
             $invoiceData = $response['Data'];
 
@@ -157,8 +162,11 @@ class MyFatoorahService implements PaymentServiceInterface
                 'data' => $response['Data'],
             ];
         } catch (\Exception $e) {
-            Log::error('Failed to save transaction data', ['error' => $e->getMessage()]);
-            // throw new \Exception('Failed to save transaction data.');
+            Log::error('Failed to save transaction data', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
+            throw new \Exception('Failed to save transaction data.');
         }
     }
 

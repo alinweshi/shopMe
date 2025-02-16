@@ -12,7 +12,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string(column: 'name', length: 100);
             $table->string('slug', length: 50)->unique();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->string('brand');
             $table->decimal('price', total: 8, places: 2);

@@ -7,6 +7,8 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\UploadFileService;
+use Illuminate\Support\Facades\Gate;
+
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -77,7 +79,9 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
-
+        if (! Gate::allows('update-post', $product)) {
+            abort(403);
+        }
         // Update product
         $product->update($validated);
 
@@ -95,5 +99,10 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(["message" => "Product not found"], 404);
         }
+    }
+    public function getProductByCategory($category)
+    {
+        $products = Product::where('category', $category)->paginate(10);
+        return ProductResource::collection($products);
     }
 }
