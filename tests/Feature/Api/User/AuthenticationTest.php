@@ -124,15 +124,15 @@ class AuthenticationTest extends TestCase
             ->assertJson([
                 'message' => 'logged out',
             ]);
-        $response->dumpHeaders();
+        // $response->dumpHeaders();
 
-        $response->dumpSession();
+        // $response->dumpSession();
 
-        $response->dump();
-        $response->dd();
-        $response->ddHeaders();
-        $response->ddBody();
-        $response->ddJson();
-        $response->ddSession();
+        // $response->dump();
+        // $response->dd();
+        // $response->ddHeaders();
+        // $response->ddBody();
+        // $response->ddJson();
+        // $response->ddSession();
     }
 }

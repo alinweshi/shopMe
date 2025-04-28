@@ -38,7 +38,7 @@ class ProductCrudTest extends TestCase
         $products = \App\Models\Product::factory()->count(3)->create();
         $response = $this->json('get', 'api/products');
 
-        $response->dump();
+        // $response->dump();
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson(
                 fn(AssertableJson $json) =>
@@ -84,11 +84,11 @@ class ProductCrudTest extends TestCase
             $sizeInKilobytes,
             'application/pdf' //MIME_TYPE from validation 
         );
-        dd($pdf);
+        // dd($pdf);
 
 
 
-        dd($image);
+        // dd($image);
         $response = $this->postJson('api/products', [
             'name' => 'product 1',
             'slug' => 'product-1',
@@ -203,7 +203,7 @@ class ProductCrudTest extends TestCase
             'image' => $image,
         ]);
         // dump($response);
-        $response->dump();
+        // $response->dump();
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
@@ -266,7 +266,7 @@ class ProductCrudTest extends TestCase
         $response->assertJson([
             'error' => 'Product not found.', // or your actual error message
         ]);
-        $response->dump();
+        // $response->dump();
     }
     public function test_product_not_found_exception_not_reported(): void
     {

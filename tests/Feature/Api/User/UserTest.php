@@ -55,7 +55,7 @@ class UserTest extends \Tests\TestCase
         ]);
 
 
-        $response->dump(); // See full response
+        // $response->dump(); // See full response
 
         $response->assertStatus(200)
             ->assertJsonStructure(['success', 'user', 'access_token']);
