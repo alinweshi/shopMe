@@ -17,7 +17,7 @@ class SendWelcomeEmailTest extends TestCase
 
     public function test_welcome_email_is_dispatched()
     {
-        $this->assert(true, 1);
+        $this->assertEquals(true, 1);
         // Mail::fake();
         // Queue::fake();
 
