@@ -8,12 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
-    use TwoFactorAuthenticatable;
     use HasApiTokens;
 
     /**
@@ -45,6 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function fullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
     public function orders()
     {
         return $this->hasMany(Order::class);
@@ -70,5 +74,9 @@ class User extends Authenticatable
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+    public function isOnline()
+    {
+        return Cache::has('user:online-' . $this->id);
     }
 }

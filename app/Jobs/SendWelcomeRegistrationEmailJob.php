@@ -38,11 +38,11 @@ class SendWelcomeRegistrationEmailJob implements ShouldQueue
         }
     }
 
-    public function failed(\Exception $exception)
-    {
-        Log::error('Welcome email job failed after retries:', [
-            'error' => $exception->getMessage(),
-            'user_id' => $this->user->id,
-        ]);
-    }
+    // public function failed(\Exception $exception)
+    // {
+    //     Log::error('Welcome email job failed after retries:', [
+    //         'error' => $exception->getMessage(),
+    //         'user_id' => $this->user->id,
+    //     ]);
+    // }
 }

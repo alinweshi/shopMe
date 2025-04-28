@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Resources\ProductResource;
 use App\Models\Product;
-use App\Services\UploadFileService;
-use Illuminate\Support\Facades\Gate;
-
 use Illuminate\Http\Request;
+use App\Services\UploadFileService;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\ProductResource;
+
+use App\Http\Requests\StoreProductRequest;
+use App\Exceptions\ProductNotFoundException;
 
 class ProductController extends Controller
 {
@@ -20,13 +21,14 @@ class ProductController extends Controller
     public function index()
     {
         return ProductResource::collection(Product::with('categories')->paginate(10));
+        // return ProductResource::collection(Product::with('categories')->get());
     }
 
     public function show($id)
     {
-        $product = Product::find(id: $id);
+        $product = Product::with('categories')->find($id);
         if (!$product) {
-            return response()->json(["message" => "Product not found"], 404);
+            throw new ProductNotFoundException();
         }
         return new ProductResource($product);
     }
@@ -51,15 +53,15 @@ class ProductController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             $this->uploadFileService->uploadFile($validatedData['image']);
-            //     $imagePath = $request->file('image')->store('products', 'public');
-            // $product->image = $imagePath;
+            $imagePath = $request->file('image')->store('products', 'public');
+            $product->image = $imagePath;
         }
 
         $product->save();
 
         return response()->json([
             'message' => 'Product created successfully',
-            'data' => $product,
+            'data' => new ProductResource($product),
         ], 201);
     }
     public function update(Request $request, $id)
@@ -70,7 +72,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric',
             'brand' => 'required|string',
-            'category' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Find the product by ID
@@ -82,6 +84,7 @@ class ProductController extends Controller
         if (! Gate::allows('update-post', $product)) {
             abort(403);
         }
+        $product->lockForUpdate();
         // Update product
         $product->update($validated);
 

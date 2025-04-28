@@ -313,6 +313,42 @@ namespace App\Models{
  * 
  *
  * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string|null $phone
+ * @property string|null $image
+ * @property string $subscription_end_date
+ * @property string $status
+ * @property string|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $full_name
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer active($value = 'active')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer subscriptionEndDate()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereSubscriptionEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer whereUpdatedAt($value)
+ */
+	class Customer extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
  * @property int $user_id
  * @property int $product_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -855,11 +891,10 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string|null $description
- * @property int $role_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\role> $roles
- * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\role> $role
+ * @property-read int|null $role_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission query()
@@ -867,7 +902,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|permission whereRoleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|permission whereUpdatedAt($value)
  */
 	class permission extends \Eloquent {}

@@ -20,7 +20,7 @@ class UserLoginRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            "email" => "required|exists:users,email",
+            'email' => 'required|email',
             "password" => "required|min:6",
         ];
     }

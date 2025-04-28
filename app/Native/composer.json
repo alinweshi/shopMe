@@ -1,0 +1,23 @@
+{
+  "name": "alinweshi/blog-news",
+  "description": "blog new for cars",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "alinweshi",
+      "email": "alinweshi@gmail.com"
+    }
+  ],
+  "require": {
+    "altorouter/altorouter": "^2.0",
+    "intervention/image": "^3.11",
+    "robmorgan/phinx": "^0.16.6"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.11"
+  }
+}

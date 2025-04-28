@@ -105,6 +105,7 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
     public function ordersByUsers()
     {
         $ordersByUser = DB::table('orders')
