@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Livewire\Frontend\Payment;
+namespace App\Livewire\Forntend\Payment;
+
 
 use Livewire\Component;
 

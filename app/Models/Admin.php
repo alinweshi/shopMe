@@ -14,36 +14,40 @@ class Admin extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use Notifiable;
-    use TwoFactorAuthenticatable;
     protected $fillable = ['first_name', 'last_name', 'username', 'email', 'password', 'phone', 'image', 'status', 'is_super', 'token_version', 'role_id'];
-    public function hasConfirmedPassword()
-    {
-        // Logic to check if the admin has confirmed their password
-        // For example, this could check a session variable or other logic
-        return session('password_confirmed', false); // Adjust based on your logic
-    }
-    public function confirmTwoFactorAuth($code)
-    {
-        $codeIsValid = app(TwoFactorAuthenticationProvider::class)
-            ->verify(decrypt($this->two_factor_secret), $code);
+    // public function hasConfirmedPassword()
+    // {
+    //     // Logic to check if the admin has confirmed their password
+    //     // For example, this could check a session variable or other logic
+    //     return session('password_confirmed', false); // Adjust based on your logic
+    // }
+    // public function confirmTwoFactorAuth($code)
+    // {
+    //     // $codeIsValid = app(TwoFactorAuthenticationProvider::class)
+    //     //     ->verify(decrypt($this->two_factor_secret), $code);
 
-        if ($codeIsValid) {
-            $this->two_factor_confirmed = true;
-            $this->save();
+    //     if ($codeIsValid) {
+    //         $this->two_factor_confirmed = true;
+    //         $this->save();
 
-            return true;
-        }
+    //         return true;
+    //     }
 
-        return false;
-    }
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
+    //     return false;
+    // }
+
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
+        /*************  ✨ Codeium Command ⭐  *************/
+        /**
+         * Get the identifier that will be stored in the subject claim of the JWT.
+         * This is usually the primary key of the model.
+         *
+         * @return mixed
+         */
+        /******  2f966214-17a1-46b9-9ec4-8f60f9a5e75c  *******/
     }
 
     /**

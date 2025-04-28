@@ -5,20 +5,33 @@ namespace Database\Seeders;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ProductsTableSeeder extends Seeder
 {
     public function run()
     {
-        // Disable foreign key checks temporarily
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // // Disable foreign key checks temporarily
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Truncate the tables
-        DB::table('cart_items')->truncate();
-        DB::table('products')->truncate();
+        // // Truncate the tables
+        // DB::table('cart_items')->truncate();
+        // DB::table('products')->truncate();
 
-        // Re-enable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // // Re-enable foreign key checks
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            Schema::disableForeignKeyConstraints();
+            DB::table('cart_items')->truncate();
+            DB::table('products')->truncate();
+            Schema::enableForeignKeyConstraints();
+        } else {
+            // For MySQL/other databases
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            DB::table('cart_items')->truncate();
+            DB::table('products')->truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
 
         // Products for 'Men' Clothing
@@ -132,7 +145,8 @@ class ProductsTableSeeder extends Seeder
         Product::create([
             'name' => 'iPhone 13',
             'category_id' => 9,
-            'slug' => 'iphone-13', 'image' => 'http://localhost:8000/images/8.png',
+            'slug' => 'iphone-13',
+            'image' => 'http://localhost:8000/images/8.png',
             'price' => 999.99,
             'discount_type' => 'fixed',
             'discount' => 100.00,
@@ -225,7 +239,8 @@ class ProductsTableSeeder extends Seeder
         Product::create([
             'name' => 'Lipstick',
             'category_id' => 19,
-            'slug' => 'lipstick', 'image' => 'http://localhost:8000/images/15.png',
+            'slug' => 'lipstick',
+            'image' => 'http://localhost:8000/images/15.png',
             'price' => 14.99,
             'discount_type' => 'percentage',
             'discount' => 10,

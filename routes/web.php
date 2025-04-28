@@ -1,22 +1,104 @@
 <?php
 
+use App\Models\User;
 use App\Livewire\Task;
 use App\Livewire\Todo;
 use App\Livewire\Index;
+use App\Models\Message;
 use App\Livewire\Checkout;
 use App\Livewire\TodoList;
 use App\Livewire\TaskComponent;
 use App\Livewire\IndexComponent;
 use App\Livewire\ShowUserComponent;
-use App\Livewire\UpdateUserComponent;
 use App\Livewire\UsersListComponent;
+use Illuminate\Support\Facades\Auth;
+use App\Livewire\UpdateUserComponent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\WebCustomerController;
+use App\Http\Controllers\CustomerOrderController;
+use App\Http\Controllers\Broadcast\ChatController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Frontend\CheckoutController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\WebControllers\User\LoginUserController;
+use App\Http\Controllers\WebControllers\User\RegisteredUserController;
+
+Route::get('/main', function () {
+    return view('home');
+})->name('main');
+/*------------------------------------------------------------------------------*/
+Route::get('test-findOrFalse/{id}', function () {
+    // dd(1);
+    // dd(User::findOrFalse(request('id')));
+});
+/*------------------------------------------------------------------------------*/
+Route::get(
+    'test-str-macro',
+    function () {
+        dd(Str::strCount('hello world,my name is ali'));
+    }
+);
+/*------------------------------------------------------------------------------*/
+Route::get(
+    'test-arr-macro',
+    function () {
+        dd(Arr::doubleArray([1, 2, 3, 4, 5, 6, 7]));
+    }
+);
+/*------------------------------------------------------------------------------*/
+
+// Registration Routes
+Route::get('/register', [RegisteredUserController::class, 'create']);
+Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
+
+
+Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout')->middleware('auth');
+
+Route::get('/login', [LoginUserController::class, 'create'])->name('login');
+Route::post('/login', [LoginUserController::class, 'login']);
+
+//Forgot Password Routes
+Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+
+// // Reset Password Routes
+// Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+// Route::post('/reset-password', [PasswordResetController::class, 'update'])->name('password.update');
+Route::get('chat-users', [ChatController::class, 'index']);
+
+Route::get('chat/{receiverId}', [ChatController::class, 'chat'])->name('chat');
+// Route::get('chat/{receiverId}',  function($receiverId)
+//     {
+//         dd(Auth::id());
+//         // Fetch messages for the chat
+//         $messages = Message::where(
+//             function ($query)  use ($receiverId) {
+//                 $query->where('sender_id', Auth::id())
+//                     ->Where('receiver_id', $receiverId);
+//             }
+//         )->orWhere(
+//             function ($query) use ($receiverId) {
+//                 $query->where('sender_id', $receiverId)
+//                     ->Where('receiver_id', Auth::id());
+//             }
+//         )->get();
+
+//         // dd($messages);
+//         // dd($messages);
+//         return view('chats.chat', compact(['messages', 'receiverId']));
+//     })->name('chat');
+Route::post('send-message/{receiverId}', [ChatController::class, 'sendMessage'])->name('sendMessage');
+Route::post('/typing', [ChatController::class, 'typing']);
+Route::post('online', [ChatController::class, 'online']);
+Route::post('offline', [ChatController::class, 'offline']);
+
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,7 +140,6 @@ Route::prefix('orders')->name('orders.')->group(function () {
     // Route for order confirmation page
     Route::get('/confirmation/{orderId}', [OrderController::class, 'confirmation'])->name('confirmation');
     Route::get('/{orderId}/edit', [OrderController::class, 'edit'])->name('edit');
-
 });
 // route::get('/todo',action: Task::class)->name('todo.home');
 // routes/web.php
@@ -92,3 +173,6 @@ route::get('layout', function () {
 Route::get('users/{user}', ShowUserComponent::class)->name('user');
 Route::get('users/{user}/update', UpdateUserComponent::class)->name('user.update');
 route::get('users', UsersListComponent::class)->name('users');
+/*----------------------------------------------------------------*/
+/*----------------------------Customer----------------------------*/
+// Route::resource('customer-orders', CustomerOrderController::class)->only('index');

@@ -1,57 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-</head>
+@section('title', 'Login')
 
-<body>
-    <div class="guest-layout">
-        <div id="session-status" class="mb-4"></div>
+@section('content')
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Login</div>
 
-        <form method="POST" action="{{ request()->is('admin/*') ? route('admin.login') : route('login') }}">
-            @csrf
-            @method('POST')
+                <div class="card-body">
+                    @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
 
-            <!-- Phone Number -->
-            <div>
-                <label for="phone" class="input-label">Phone</label>
-                <input id="phone" class="text-input" type="tel" name="phone" required autofocus autocomplete="tel" />
-                @error('phone')
-                <div class="input-error">{{ $message }}</div>
-                @enderror
+                    @if (session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" required>
+                            @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <p class="mt-3 text-center">
+                        Forgot your password? <a href="{{ route('password.request') }}">Reset Password</a>
+                    </p>
+
+                    <p class="text-center">
+                        Don't have an account? <a href="{{ route('register') }}">Register</a>
+                    </p>
+                </div>
             </div>
-
-            <!-- Password -->
-            <div class="mt-4">
-                <label for="password" class="input-label">Password</label>
-                <input id="password" class="text-input" type="password" name="password" required
-                    autocomplete="current-password" />
-                @error('password')
-                <div class="input-error">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Remember Me -->
-            <div class="block mt-4">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox" name="remember" class="checkbox" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <a class="forgot-password" href="{{ route('password.request') }}">Forgot your password?</a>
-                <button type="submit" class="primary-button ms-3">Log in</button>
-            </div>
-            <div class="flex items-center justify-end mt-4">
-                <a class="forgot-password" href="{{ route('register') }}">Create New Account</a>
-            </div>
-        </form>
+        </div>
     </div>
-</body>
-
-</html>
+</div>
+@endsection

@@ -26,8 +26,8 @@ class CartController extends Controller
 
         // Check if the product already exists in the cart
         $cartItem = CartItem::where('cart_id', $cart->id)
-                            ->where('product_id', $request->product_id)
-                            ->first();
+            ->where('product_id', $request->product_id)
+            ->first();
 
         if ($cartItem) {
             // If the product already exists, update the quantity and total price
@@ -58,11 +58,15 @@ class CartController extends Controller
             $user = Auth::user();
             $cart = Cart::where('user_id', $user->id)->first();
 
-            if (!$cart) {
+            $cartItems = CartItem::with('product')->where('cart_id',  $cart->id)->get();
+            if (!$cart || !$cartItems) {
                 return view('front.cart.empty');
             }
 
-            $cartItems = CartItem::where('cart_id', operator: $cart->id)->get();
+            // if ($cartItems->isEmpty()) {
+            //     return view('front.cart.empty');
+            // }
+            // dd($cartItems);
 
             // Calculate total
             $total = $cartItems->sum('total_price');
@@ -76,7 +80,7 @@ class CartController extends Controller
             }, $cartItems));
         }
 
-        return view('front.cart.view', compact('cartItems', 'total'));
+        return view('front.cart.view', get_defined_vars());
     }
     // Update cart item quantity (applies to both guests and authenticated users)
     public function updateCart(Request $request, $id)
@@ -190,5 +194,4 @@ class CartController extends Controller
             return response()->json(['error' => 'Invalid or expired coupon'], 400);
         }
     }
-
 }

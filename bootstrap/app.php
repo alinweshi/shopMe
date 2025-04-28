@@ -8,15 +8,21 @@ use App\Exceptions\ProductNotFoundException;
 use App\Http\Middleware\AdminPasswordConfirm;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Facade;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
+        channels: __DIR__ . '/../routes/channels.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(callback: function (Middleware $middleware) {
+        $middleware->api([
+            // \Laravel\Telescope\Http\Middleware\Authorize::class
+
+        ]);
         $middleware->web([
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -27,6 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
             [
                 'admin.password.confirm' => AdminPasswordConfirm::class,
                 'admin.auth' => AdminMiddleware::class,
+                Facade::defaultAliases()->merge([
+                    'Redis' => Illuminate\Support\Facades\Redis::class,
+                ])->toArray(),
             ]
         );
     })
@@ -52,6 +61,6 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json(['error' => $exception->getMessage()], 404);
         });
     })->create();
-if (env('APP_DEBUG')) {
-    $app->register(Barryvdh\Debugbar\LumenServiceProvider::class);
-}
+// if (env('APP_DEBUG')) {
+//     $app->register(Barryvdh\Debugbar\LumenServiceProvider::class);
+// }

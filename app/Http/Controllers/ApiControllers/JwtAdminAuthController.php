@@ -5,20 +5,15 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use App\Http\Requests\Jwt\Admins\AdminLoginRequest;
 
 
-class JwtAdminAuthController extends Controller implements HasMiddleware
+class JwtAdminAuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api-admin', ['except' => ['login', 'register']]);
-    }
+
     /**
      * Get the middleware that should be assigned to the controller.
      */
-    public static function middleware() {}
     public function register() {}
     public function login(AdminLoginRequest $request)
     {

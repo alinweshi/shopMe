@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Hash;
 use Tests\TestCase;
+use App\Models\User;
+use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthenticationTest extends TestCase
 {
@@ -12,7 +14,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('api/users//login');
+        $response = $this->get('/login');
 
         $response->assertStatus(200);
     }
@@ -22,16 +24,18 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
 
 
-        $response = $this->post('api/users/login', [
+        $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->actingAs($user);
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirectToRoute('main');
     }
+    #[Test]
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function UserCannotLoginWithWrongPassword(): void
     {
         $user = User::factory()->create();
 
@@ -42,6 +46,44 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+    public function test_users_cannot_login_with_invalid_email(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'invalid-email',
+            'password' => 'password',
+        ]);
+        // $this->assertInvalidCredentials(['email']);
+        // $response->assertSessionHasErrors([
+        //     'email' => 'Invalid Credentials'
+        // ]);
+        // $response->assertSessionHasErrors([
+        //     'name' => 'The given name was invalid.'
+        // ]);
+        $response->assertInvalid([
+            // 'name' => 'The name field is required.',
+            'email'
+        ]);
+        // $response->assertInvalid(['email' => 'Invalid Credentials']);
+        $this->assertGuest();
+    }
+    public function test_users_cannot_login_with_invalid_password_format(): void
+    {
+        $user = User::factory()->create();
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+        // $response->assertSessionHasNoErrors();
+
+        $response->assertSessionHasErrors(['password']);
+        $response->assertInvalid([
+            // 'email',
+            // 'password'
+        ]);
+    }
+
+
+
 
     public function test_users_can_logout(): void
     {
@@ -50,6 +92,6 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

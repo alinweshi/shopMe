@@ -17,6 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 class UserAuthController extends Controller
 {
+
     public function register(UserRegistrationRequest $request)
     {
         $data = $request->validated();
@@ -41,12 +42,11 @@ class UserAuthController extends Controller
     {
         $data = $request->validated();
         logger('Request validated:', $request->validated());
-
         $user = User::with('addresses')->where('email', $data['email'])->first();
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response()->json([
                 'error' => 'Invalid Credentials',
-            ], 401);
+            ], 400);
         }
         $token = $user->createToken($user->name . '-AuthToken')->plainTextToken;
         return response()->json([

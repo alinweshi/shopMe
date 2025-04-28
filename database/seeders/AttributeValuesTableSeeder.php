@@ -2,27 +2,140 @@
 
 namespace Database\Seeders;
 
+use App\Models\Attribute;
 use App\Models\AttributeValue;
 use Illuminate\Database\Seeder;
 
 class AttributeValuesTableSeeder extends Seeder
 {
+    protected array $attributeValues = [
+        'Color' => [
+            'Red',
+            'Blue',
+            'White',
+            'Black',
+            'Green',
+            'Yellow',
+            'Orange',
+            'Purple',
+            'Pink',
+            'Gray'
+        ],
+        'Size' => [
+            'XS',
+            'S',
+            'M',
+            'L',
+            'XL',
+            'XXL',
+            'XXXL'
+        ],
+        'Style' => [
+            'Casual',
+            'Formal',
+            'Sporty',
+            'Bohemian',
+            'Vintage',
+            'Modern',
+            'Classic'
+        ],
+        'Material' => [
+            'Cotton',
+            'Polyester',
+            'Wool',
+            'Silk',
+            'Leather',
+            'Denim',
+            'Linen'
+        ],
+        'Pattern' => [
+            'Solid',
+            'Striped',
+            'Plaid',
+            'Floral',
+            'Polka Dot',
+            'Geometric',
+            'Camouflage'
+        ],
+        'Fit' => [
+            'Slim',
+            'Regular',
+            'Loose',
+            'Tapered',
+            'Oversized',
+            'Skinny'
+        ],
+        'Length' => [
+            'Short',
+            'Medium',
+            'Long',
+            'Knee-Length',
+            'Ankle-Length',
+            'Full-Length'
+        ],
+        'Neckline' => [
+            'V-Neck',
+            'Round Neck',
+            'Square Neck',
+            'Collared',
+            'Off Shoulder',
+            'Boat Neck',
+            'Turtleneck'
+        ],
+        'Sleeve Length' => [
+            'Sleeveless',
+            'Short Sleeve',
+            '3/4 Sleeve',
+            'Long Sleeve'
+        ],
+        'Occasion' => [
+            'Everyday',
+            'Work',
+            'Party',
+            'Wedding',
+            'Travel',
+            'Gym',
+            'Beach'
+        ],
+    ];
+
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Color Values
-        AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Red']);
-        AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Blue']);
-        AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'White']);
-        AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Black']);
-        AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Orange']);
+        foreach ($this->attributeValues as $attributeName => $values) {
+            $attribute = Attribute::where('name', $attributeName)->first();
 
-        // Size Values
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Small']);
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Medium']);
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Large']);
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XLarge']);
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XXLarge']);
-        AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XXXLarge']);
+            if ($attribute) {
+                foreach ($values as $value) {
+                    AttributeValue::firstOrCreate([
+                        'attribute_id' => $attribute->id,
+                        'attribute_value' => $value
+                    ]);
+                }
+            }
+        }
+    }
+}
+    // public function run()
+    // {
+        // // Color Values
+        // AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Red']);
+        // AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Blue']);
+        // AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'White']);
+        // AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Black']);
+        // AttributeValue::create(['attribute_id' => 1, 'attribute_value' => 'Orange']);
+
+        // // Size Values
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Small']);
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Medium']);
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'Large']);
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XLarge']);
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XXLarge']);
+        // AttributeValue::create(['attribute_id' => 2, 'attribute_value' => 'XXXLarge']);
 
         // // Style Values
         // AttributeValue::create(['attribute_id' => 3, 'attribute_value' => 'Slim']);
@@ -95,6 +208,6 @@ class AttributeValuesTableSeeder extends Seeder
         // // Volume Values
         // AttributeValue::create(['attribute_id' => 16, 'attribute_value' => '200 ml']);
         // AttributeValue::create(['attribute_id' => 16, 'attribute_value' => '500 ml']);
-        // AttributeValue::create(['attribute_id' => 16, 'attribute_value' => '1 L']);
-    }
-}
+//         // AttributeValue::create(['attribute_id' => 16, 'attribute_value' => '1 L']);
+//     }
+// }
