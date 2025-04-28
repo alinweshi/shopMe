@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Livewire\Frontend\Checkout;
+namespace App\Livewire\Forntend\Checkout;
+
 
 use Livewire\Component;
 

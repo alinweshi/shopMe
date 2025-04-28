@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DesignPatterns\Creational\Factory\Notifications;
+namespace App\DesignPatterns\Creational\Factory\Notifications\ConcreteProducts;
 
 use App\DesignPatterns\Creational\Factory\Notifications\NotificationInterface;
 

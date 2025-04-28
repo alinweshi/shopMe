@@ -2,10 +2,11 @@
 
 namespace App\DesignPatterns\Structural\Adapter;
 
+
 use App\DesignPatterns\Structural\Adapter\PaypalPayment;
 use App\DesignPatterns\Structural\Adapter\StripePayment;
 
-class paymentContext
+class PaymentContext
 {
     private PaymentInterface $payment;
     public function __construct(string $paymentMethod)
