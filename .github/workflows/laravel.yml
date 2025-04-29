@@ -45,7 +45,8 @@ jobs:
       run: php artisan migrate:fresh --env=testing --force
     - name: Install NPM dependencies
       run: |
-        npm ci
+        rm -rf node_modules package-lock.json
+        npm install
         npm run build
     - name: Run Tests
       run: php artisan test --env=testing
