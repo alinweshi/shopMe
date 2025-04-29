@@ -47,7 +47,7 @@ class UserRegistrationTest extends TestCase
     }
     public function test_registration_flows()
     {
-        Mail::fake();
+        Queue::fake(); // Fake the queue instead of Mail
 
         $response = $this->postJson('/api/users/register', [
             'first_name' => 'Test',
@@ -59,12 +59,34 @@ class UserRegistrationTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Assert email was queued
-        Mail::assertQueued(\App\Mail\WelcomeEmail::class);
+        // Assert job was dispatched instead
+        Queue::assertPushed(SendWelcomeRegistrationEmailJob::class);
 
-        // Assert database record
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com'
         ]);
     }
+
+    // public function test_registration_flows()
+    // {
+    //     Mail::fake();
+
+    //     $response = $this->postJson('/api/users/register', [
+    //         'first_name' => 'Test',
+    //         'last_name' => 'User',
+    //         'email' => 'test@example.com',
+    //         'password' => 'password123',
+    //         'password_confirmation' => 'password123'
+    //     ]);
+
+    //     $response->assertStatus(200);
+
+    //     // Assert email was queued
+    //     Mail::assertQueued(\App\Mail\WelcomeEmail::class);
+
+    //     // Assert database record
+    //     $this->assertDatabaseHas('users', [
+    //         'email' => 'test@example.com'
+    //     ]);
+    // }
 }
