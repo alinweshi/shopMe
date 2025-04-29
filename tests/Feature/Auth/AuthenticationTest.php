@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use Hash;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Support\Facades\Vite;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,13 +13,16 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_screen_can_be_rendered(): void
+    public function test_login_screen_can_be_rendered()
     {
+        // Properly mock Vite first
+        Vite::shouldReceive('asset')
+            ->andReturn('http://localhost:3000/resources/css/app.css');
+
         $response = $this->get('/login');
 
         $response->assertStatus(200);
     }
-
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
         $user = User::factory()->create(
