@@ -29,11 +29,11 @@ class UserAuthController extends Controller
         // SendWelcomeRegistrationEmailJob::dispatchSync();
         // SendWelcomeRegistrationEmailJob::dispatch_now();
         SendWelcomeRegistrationEmailJob::dispatch($user)
-            ->onQueue('emails')
-            ->delay(now()->addMinutes(10));
+            ->onQueue('emails');
+        // ->delay(now()->addMinutes(10));
 
         return response()->json([
-            'message' => 'User Created successfully',
+            'message' => 'User Created Successfully',
             'user' => $user,
             'address' => $user->address,
         ], 200);

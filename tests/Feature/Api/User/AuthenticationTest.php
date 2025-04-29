@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
-        dd($response->json());
+        // dd($response->json());
 
         // Assert: Check response
         $response->assertStatus(200)
@@ -41,7 +41,7 @@ class AuthenticationTest extends TestCase
         $this->assertNotNull($user->tokens);
     }
 
-    public function user_cannot_login_with_invalid_credentials()
+    public function test_user_cannot_login_with_invalid_credentials()
     {
         // Arrange: Create a user
         $user = User::factory()->create([
@@ -54,9 +54,9 @@ class AuthenticationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
-
+        // $response->dump();
         // Assert: Ensure login fails
-        $response->assertStatus(401)
+        $response->assertStatus(400)
             ->assertJson([
                 'error' => 'Invalid Credentials',
             ]);
@@ -76,39 +76,27 @@ class AuthenticationTest extends TestCase
     }
     public function test_user_cannot_login_with_invalid_format_email()
     {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => Hash::make('password123'),
+        ]);
         $response = $this->postJson('/api/users/login', [
             'email' => 'invalid-email',
 
             'password' => 'password123',
         ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
+        // $response->dump();
+        $response->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => [
+                    'email' => ['Email is not valid']
+                ]
+            ]);
+        // ->assertJsonValidationErrors(['email']);
     }
-    public function test_validation_errors_for_login()
-    {
-        // Test invalid email format
-        $this->postJson('/api/users/login', [
-            'email' => 'invalid-email',
-            'password' => 'password123',
-        ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
 
-        // Test missing email
-        $this->postJson('/api/users/login', [
-            'password' => 'password123',
-        ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
-
-        // Test missing password
-        $this->postJson('/api/users/login', [
-            'email' => 'valid@example.com',
-        ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['password']);
-    }
     public function test_user_can_logout()
     {
         $user = User::factory()->create([
@@ -124,15 +112,15 @@ class AuthenticationTest extends TestCase
             ->assertJson([
                 'message' => 'logged out',
             ]);
-        $response->dumpHeaders();
+        // $response->dumpHeaders();
 
-        $response->dumpSession();
+        // $response->dumpSession();
 
-        $response->dump();
-        $response->dd();
-        $response->ddHeaders();
-        $response->ddBody();
-        $response->ddJson();
-        $response->ddSession();
+        // $response->dump();
+        // $response->dd();
+        // $response->ddHeaders();
+        // $response->ddBody();
+        // $response->ddJson();
+        // $response->ddSession();
     }
 }

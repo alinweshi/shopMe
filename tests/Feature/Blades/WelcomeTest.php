@@ -12,7 +12,7 @@ class WelcomeTest extends TestCase
             ->assertSeeText('Laravel');
         $response = $this->get('/');
         // $response->dd();
-        $response->ddHeaders();
+        // $response->ddHeaders();
         // $response->ddBody();
         // $response->ddJson();
         // $response->ddSession();
