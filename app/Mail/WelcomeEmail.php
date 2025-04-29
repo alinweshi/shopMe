@@ -17,6 +17,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class WelcomeEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+    /*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Create a new WelcomeEmail instance.
+     *
+     * @param User $user The user to whom the welcome email will be sent.
+     */
+
+    /*******  4227e1e2-6148-41f3-8a57-285c606b2ae5  *******/
     public function __construct(public User $user)
     {
         //

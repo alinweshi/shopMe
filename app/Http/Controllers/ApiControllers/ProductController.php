@@ -30,7 +30,9 @@ class ProductController extends Controller
         if (!$product) {
             throw new ProductNotFoundException();
         }
-        return new ProductResource($product);
+        return response()->json([
+            'data' => new ProductResource($product)
+        ]);
     }
     public function store(StoreProductRequest $request)
     {

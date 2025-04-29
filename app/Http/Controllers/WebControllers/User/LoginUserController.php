@@ -11,7 +11,7 @@ use App\Http\Requests\Auth\LoginRequest;
 
 class LoginUserController extends Controller
 {
-    public function index()
+    public function create()
     {
         return view('auth.login');
     }
