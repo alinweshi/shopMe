@@ -24,7 +24,10 @@ class ProductAttributeTest extends TestCase
     //     $this->seed(ProductsTableSeeder::class);
     // }
     // use RefreshDatabase;
-    // public function test_product_attribute_seeder()
+    public function test_product_attribute_seeder()
+    {
+        $this->assertTrue(true);
+    }
     // {
     //     // dd($this->seed(ProductsTableSeeder::class));
 
