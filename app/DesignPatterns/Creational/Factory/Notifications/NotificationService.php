@@ -1,8 +1,9 @@
 <?php
 
+namespace App\DesignPatterns\Creational\Factory\Notifications;
+
 use App\DesignPatterns\Creational\Factory\Notifications\NotificationInterface;
 
-namespace App\DesignPatterns\Creational\Factory\Notifications;
 
 class NotificationService
 {
