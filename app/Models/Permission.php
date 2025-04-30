@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 
-class permission extends Model
+class Permission extends Model
 {
     use HasFactory, HasRelationships;
     protected $fillable = ['name', 'description', 'role_id'];
