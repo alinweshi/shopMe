@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Order;
+use App\Models\Review;
 use App\Models\Vendor;
 use App\Models\Address;
 use App\Models\Product;
@@ -18,7 +19,9 @@ use App\Models\AttributeValue;
 use App\Models\ShippingMethod;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\AdminsTableSeeder;
 use Database\Seeders\CouponTableSeeder;
+use PHPUnit\Framework\Attributes\Ticket;
 use Database\Seeders\AddressesTableSeeder;
 use Database\Seeders\CartItemsTableSeeder;
 
@@ -43,12 +46,15 @@ class DatabaseSeeder extends Seeder
             OrderItem::truncate();
             Attribute::truncate();
             AttributeValue::truncate();
+            Admin::truncate();
+            Review::truncate();
+            Vendor::truncate();
             ShippingMethod::truncate();
+            // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
             // Seed factories
             User::factory()->count(10)->create();
             Admin::factory()->count(2)->create();
-            Vendor::factory()->count(3)->create();
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             $this->call([
 
@@ -66,6 +72,22 @@ class DatabaseSeeder extends Seeder
                 AttributesTableSeeder::class,
                 AttributeValuesTableSeeder::class,
                 ProductAttributesTableSeeder::class,
+                CustomersSeeder::class,
+                // DiscountTableSeeder::class,
+                FavoritesTableSeeder::class,
+                // ProductImagesTableSeeder::class,
+                ReviewsTableSeeder::class,
+                RoleTableSeeder::class,
+                PermissionTableSeeder::class,
+                RolePermissionTableSeeder::class,
+                VendorsTableSeeder::class,
+                AdminsTableSeeder::class,
+                ShippingMethodTableSeeder::class,
+                TicketsSeeder::class,
+                BookingsSeeder::class,
+
+
+
 
             ]);
         } catch (\Exception $e) {

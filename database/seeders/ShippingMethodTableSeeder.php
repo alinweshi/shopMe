@@ -62,9 +62,21 @@ class ShippingMethodTableSeeder extends Seeder
                 'is_active' => true,
             ],
         ];
+        // dd($shippingMethods);
+        // foreach ($shippingMethods as $method) {
+        //     dd($method);
+        // }
 
-        foreach ($shippingMethods as $method) {
-            ShippingMethod::create($method);
-        }
+
+        array_map(function ($method) {
+            ShippingMethod::firstOrCreate(
+                ['slug' => $method['slug']], // Unique condition
+                $method                       // Values to insert if not found
+            );
+        }, $shippingMethods);
+
+        // foreach ($shippingMethods as $method) {
+        //     ShippingMethod::create($method);
+        // }
     }
 }
