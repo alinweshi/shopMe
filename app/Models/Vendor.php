@@ -11,12 +11,7 @@ class Vendor extends User
     use HasFactory;
     use Notifiable;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
-    ];
+    protected $fillable = ['first_name', 'last_name', 'username', 'email', 'password', 'phone', 'image', 'status'];
 
     /**
      * Get the products associated with the vendor.
